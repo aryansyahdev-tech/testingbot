@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Antrean Online Emas (Multi Page)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f6f7f9;
+      }
+      .container {
+        max-width: 480px;
+        margin: 40px auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+      }
+      input,
+      button {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+      }
+      button {
+        background: #d4af37;
+        border: none;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      button:hover {
+        opacity: 0.9;
+      }
+      .hidden {
+        display: none;
+      }
+      .ticket {
+        padding: 10px;
+        background: #eee;
+        margin: 5px 0;
+        border-radius: 4px;
+      }
+      nav {
+        text-align: center;
+        margin-bottom: 10px;
+        font-size: 14px;
+        color: #777;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- PAGE 1: LOGIN -->
+    <div class="container" id="page-login">
+      <h1>Login Antrean Emas</h1>
+      <input id="username" placeholder="Username" />
+      <input id="password" type="password" placeholder="Password" />
+      <button onclick="login()">Login</button>
+    </div>
+
+    <!-- PAGE 2: DASHBOARD -->
+    <div class="container hidden" id="page-dashboard">
+      <nav>Login → Dashboard → Verifikasi → Antrean</nav>
+      <h1>Dashboard</h1>
+      <p>Selamat datang, <b id="userLabel"></b></p>
+      <button onclick="goToVerify()">Ambil Antrean</button>
+    </div>
+
+    <!-- PAGE 3: VERIFIKASI (ITUNGAN) -->
+    <div class="container hidden" id="page-verify">
+      <nav>Login → Dashboard → Verifikasi → Antrean</nav>
+      <h1>Verifikasi</h1>
+      <p>Jawab soal berikut:</p>
+      <p><b id="question"></b></p>
+      <input id="answer" placeholder="Jawaban" />
+      <button onclick="submitAnswer()">Submit</button>
+    </div>
+
+    <!-- PAGE 4: ANTREAN -->
+    <div class="container hidden" id="page-queue">
+      <nav>Login → Dashboard → Verifikasi → Antrean</nav>
+      <h1>Antrean Online Emas</h1>
+      <div id="queueList"></div>
+      <button onclick="logout()">Logout</button>
+    </div>
+
+    <script>
+      const USERS = {
+        user1: "pass1",
+        user2: "pass2",
+        user3: "pass3",
+        user4: "pass4",
+        user5: "pass5",
+      };
+
+      let currentUser = null;
+      let correctAnswer = null;
+
+      function show(pageId) {
+        document
+          .querySelectorAll(".container")
+          .forEach((p) => p.classList.add("hidden"));
+        document.getElementById(pageId).classList.remove("hidden");
+      }
+
+      function login() {
+        const u = username.value;
+        const p = password.value;
+        if (USERS[u] === p) {
+          currentUser = u;
+          userLabel.innerText = u;
+          show("page-dashboard");
+        } else {
+          alert("Login gagal");
+        }
+      }
+
+      function goToVerify() {
+        generateQuestion();
+        show("page-verify");
+      }
+
+      function generateQuestion() {
+        const a = Math.floor(Math.random() * 10) + 1;
+        const b = Math.floor(Math.random() * 10) + 1;
+        correctAnswer = a + b;
+        question.innerText = `${a} + ${b}`;
+      }
+
+      function submitAnswer() {
+        if (parseInt(answer.value) === correctAnswer) {
+          const div = document.createElement("div");
+          div.className = "ticket";
+          div.innerText = `User ${currentUser} masuk antrean (No: ${
+            document.querySelectorAll(".ticket").length + 1
+          })`;
+          queueList.appendChild(div);
+          show("page-queue");
+        } else {
+          alert("Jawaban salah");
+        }
+      }
+
+      function logout() {
+        currentUser = null;
+        username.value = "";
+        password.value = "";
+        answer.value = "";
+        show("page-login");
+      }
+    </script>
+  </body>
+</html>
